@@ -1,26 +1,29 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          teste
-        </a>
-      </header>
-    </div>
-  );
-}
+import { Home, PostCreate, UpdatePost, UserProfile } from './pages/index';
+import { Navigation } from './components/index'
+
+const App: React.FC = () => {
+	return (
+		<Router>
+			<div id='main'>
+				<Navigation />
+
+				<div id='body' className='container'>
+					<div className='row justify-content-center'>
+						<Routes>
+							<Route path="/" element={<Home />} />
+							<Route path="/post" element={<PostCreate />} />
+							<Route path="/post2" element={<UpdatePost />} />
+							<Route path="/user/:userId" element={<UserProfile />} />
+						</Routes>
+
+					</div>
+				</div>
+			</div>
+		</Router>
+	);
+};
 
 export default App;

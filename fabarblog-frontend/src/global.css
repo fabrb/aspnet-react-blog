@@ -1,0 +1,20 @@
+/* global.css */
+
+/* Remove margin e padding de todos os elementos */
+*,
+*::before,
+*::after {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+/* Define uma fonte padrão e remove o espaçamento em torno do corpo da página */
+body {
+	font-family: Arial, sans-serif;
+	line-height: 1.6;
+}
+
+ul {
+	list-style-type: none;
+}
