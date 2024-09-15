@@ -1,8 +1,3 @@
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-WORKDIR /app
-EXPOSE 80
-EXPOSE 443
-
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
@@ -10,13 +5,16 @@ COPY ["fabarblog.csproj", "./"]
 RUN dotnet restore
 
 COPY . .
-RUN dotnet build -c Release -o /app/build
+RUN dotnet build -c Debug -o /app/build
 
-FROM build AS publish
-RUN dotnet publish -c Release -o /app/publish
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
 
+# Imagem final
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build /app/build .
 
 ENTRYPOINT ["dotnet", "fabarblog.dll"]
