@@ -14,7 +14,7 @@ services:
       - db
     volumes:
       - ./fabarblog:/src
-    command: dotnet watch run
+    command: dotnet watch run --non-interactive
 
   frontend:
     build:
