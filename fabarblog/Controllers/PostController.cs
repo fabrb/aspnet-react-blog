@@ -3,6 +3,7 @@ using fabarblog.DTO;
 using fabarblog.Models;
 using fabarblog.Services;
 using System.Diagnostics;
+using fabarblog.Utils;
 
 namespace fabarblog.Controller;
 
@@ -20,12 +21,15 @@ public class PostController(PostService postsService) : ControllerBase
 	}
 
 	[HttpPost]
-	public async Task<ActionResult<Guid>> Create([FromBody] Object post, [FromHeader] string? autenthication)
+	public async Task<ActionResult<Guid>> Create([FromBody] PostDTO post, [FromHeader] string? autenthication)
 	{
-		if (post == null)
+		var result = _postsService.CreateNewPost(post);
+
+		if (result.IsLeft())
 		{
-			return BadRequest("Post data is invalid.");
+			return BadRequest(result);
 		}
-		return Ok();
+
+		return Ok(result);
 	}
 }
