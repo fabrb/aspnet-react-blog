@@ -1,3 +1,5 @@
+using fabarblog.Repository;
+using fabarblog.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 

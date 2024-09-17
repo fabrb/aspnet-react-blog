@@ -1,11 +1,12 @@
+namespace fabarblog.Models;
 public class Post
 {
-	public required int Id { get; set; }
+	public required Guid Id { get; set; }
 	public required string Title { get; set; }
 	public required string Content { get; set; }
 
-	public required int UserId { get; set; }
-	public required User User { get; set; }
+	public Guid UserId { get; set; }
+	public User User { get; set; }
 
 	public DateTime CreatedAt { get; set; }
 }
