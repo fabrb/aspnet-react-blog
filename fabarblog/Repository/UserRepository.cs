@@ -6,33 +6,33 @@ using fabarblog.Models;
 using fabarblog.Data;
 
 namespace fabarblog.Repository;
-public class PostRepository
+public class UserRepository
 {
 	private readonly Context _context;
 
-	public PostRepository(Context context)
+	public UserRepository(Context context)
 	{
 		_context = context;
 	}
 
-	public async Task<IEnumerable<Post>> SearchAllPosts()
+	public async Task<IEnumerable<User>> SearchAllUsers()
 	{
-		return await _context.Posts
-			.Include(u => u.User)
+		return await _context.Users
+			.Include(u => u.Posts)
 			.ToListAsync();
 	}
 
-	public async Task<bool> IncludeNewPost(Post post)
+	public async Task<bool> IncludeNewUser(User user)
 	{
 		try
 		{
-			var x = await _context.Posts.AddAsync(post);
+			var x = await _context.Users.AddAsync(user);
 			Console.WriteLine(x);
 			await _context.SaveChangesAsync();
 		}
 		catch (Exception ex)
 		{
-			Console.WriteLine("IncludeNewPost ERROR");
+			Console.WriteLine("IncludeNewUser ERROR");
 			Console.WriteLine(ex);
 		}
 
