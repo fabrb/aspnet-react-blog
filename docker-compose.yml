@@ -14,6 +14,8 @@ services:
       - db
     volumes:
       - ./fabarblog:/src
+      - /root/.nuget/packages:/root/.nuget/packages
+      - /root/.dotnet/tools:/root/.dotnet/tools
 
   frontend:
     build:
