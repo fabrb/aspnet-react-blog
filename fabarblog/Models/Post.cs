@@ -1,11 +1,15 @@
+using System.Text.Json.Serialization;
+
 namespace fabarblog.Models;
 public class Post
 {
-	public required Guid Id { get; set; }
-	public required string Title { get; set; }
-	public required string Content { get; set; }
+	public int Id { get; set; }
+	public string Title { get; set; }
+	public string Content { get; set; }
 
-	public Guid UserId { get; set; }
+	public int UserId { get; set; }
+
+	[JsonIgnore] //Depois trocar por uma outra estrutura, DTO
 	public User User { get; set; }
 
 	public DateTime CreatedAt { get; set; }
