@@ -1,3 +1,4 @@
+using fabarblog.Data;
 using fabarblog.Repository;
 using fabarblog.Services;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +17,10 @@ builder.Services.AddDbContext<Context>(options =>
 
 // Registrar serviços do repositório e outros serviços de dependência
 builder.Services.AddScoped<PostRepository>();
+builder.Services.AddScoped<UserRepository>();
+
 builder.Services.AddScoped<PostService>();
+builder.Services.AddScoped<UserService>();
 
 var app = builder.Build();
 
