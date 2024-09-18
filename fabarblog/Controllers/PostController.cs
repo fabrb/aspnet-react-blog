@@ -23,7 +23,7 @@ public class PostController(PostService postsService) : ControllerBase
 	[HttpPost]
 	public async Task<ActionResult<Guid>> Create([FromBody] PostDTO post, [FromHeader] string? autenthication)
 	{
-		var result = _postsService.CreateNewPost(post);
+		var result = await _postsService.CreateNewPost(post);
 
 		if (result.IsLeft())
 		{
