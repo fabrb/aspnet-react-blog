@@ -1,43 +1,63 @@
+using System.Text;
 using fabarblog.Data;
 using fabarblog.Repository;
 using fabarblog.Services;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Registrar os serviços necessários, incluindo os controladores
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Configurar o DbContext com a conexão ao PostgreSQL
 builder.Services.AddDbContext<Context>(options =>
 		options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection")));
 
-// builder.Services.AddIdentity(options => options.SignIn.RequireAuthenticatedUser = true);
 
-builder.Services.AddControllers(options =>
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+var key = Encoding.ASCII.GetBytes(jwtSettings["Key"]);
+
+builder.Services.AddAuthentication(options =>
 {
-	var policy = new AuthorizationPolicyBuilder()
-		.RequireAuthenticatedUser()
-		.Build();
+	options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+	options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+	.AddJwtBearer(options =>
+	{
+		options.RequireHttpsMetadata = false;
+		options.SaveToken = true;
+		options.TokenValidationParameters = new TokenValidationParameters
+		{
+			// ValidateIssuer = true,
+			// ValidateAudience = true,
+			ValidateLifetime = true,
+			ValidateIssuerSigningKey = true,
+			ValidIssuer = jwtSettings["Issuer"],
+			ValidAudience = jwtSettings["Audience"],
+			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]))
+		};
+	});
 
-	options.Filters.Add(new AuthorizeFilter(policy));
-});
+builder.Services.AddAuthorizationBuilder()
+	.AddPolicy("superuser",
+		policy => policy
+			.RequireRole("admin")
+			.RequireClaim("scope", "list.users")
+	);
 
-// Registrar serviços do repositório e outros serviços de dependência
 builder.Services.AddScoped<PostRepository>();
 builder.Services.AddScoped<UserRepository>();
 
 builder.Services.AddScoped<PostService>();
 builder.Services.AddScoped<UserService>();
 
+builder.Logging.AddConsole();
+
+
 var app = builder.Build();
 
-// Configurações para ambiente de desenvolvimento, como o Swagger
 if (app.Environment.IsDevelopment())
 {
 	app.UseDeveloperExceptionPage();
@@ -47,10 +67,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseRouting();
 
-// Middleware de autorização (se necessário)
+app.UseAuthentication();
 app.UseAuthorization();
 
-// Mapeamento dos controladores para as rotas
 app.MapControllers();
 
 app.Run();
