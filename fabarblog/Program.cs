@@ -1,6 +1,8 @@
 using fabarblog.Data;
 using fabarblog.Repository;
 using fabarblog.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,6 +16,17 @@ builder.Services.AddSwaggerGen();
 // Configurar o DbContext com a conexão ao PostgreSQL
 builder.Services.AddDbContext<Context>(options =>
 		options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection")));
+
+// builder.Services.AddIdentity(options => options.SignIn.RequireAuthenticatedUser = true);
+
+builder.Services.AddControllers(options =>
+{
+	var policy = new AuthorizationPolicyBuilder()
+		.RequireAuthenticatedUser()
+		.Build();
+
+	options.Filters.Add(new AuthorizeFilter(policy));
+});
 
 // Registrar serviços do repositório e outros serviços de dependência
 builder.Services.AddScoped<PostRepository>();
