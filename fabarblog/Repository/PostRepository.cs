@@ -22,17 +22,51 @@ public class PostRepository
 			.ToListAsync();
 	}
 
+	public async Task<Post?> SearchPost(int id)
+	{
+		return await _context.Posts
+			.FirstOrDefaultAsync(post => post.Id == id);
+	}
+
 	public async Task<bool> IncludeNewPost(Post post)
 	{
 		try
 		{
 			var x = await _context.Posts.AddAsync(post);
-			Console.WriteLine(x);
 			await _context.SaveChangesAsync();
 		}
 		catch (Exception ex)
 		{
-			Console.WriteLine("IncludeNewPost ERROR");
+			Console.WriteLine(ex);
+		}
+
+		return true;
+	}
+
+	public async Task<bool> EditPost(Post post)
+	{
+		try
+		{
+			var x = _context.Posts.Entry(post).State = EntityState.Modified;
+			await _context.SaveChangesAsync();
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex);
+		}
+
+		return true;
+	}
+
+	public async Task<bool> RemovePost(Post post)
+	{
+		try
+		{
+			var x = _context.Posts.Remove(post);
+			await _context.SaveChangesAsync();
+		}
+		catch (Exception ex)
+		{
 			Console.WriteLine(ex);
 		}
 
