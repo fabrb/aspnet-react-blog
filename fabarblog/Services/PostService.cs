@@ -33,4 +33,37 @@ public class PostService(PostRepository postsRepository)
 
 		return Either.Instanciate<ErrorCall, SuccessCall>(new SuccessCall { Message = "Post created", Details = newPost });
 	}
+
+	public async Task<Either<ErrorCall, SuccessCall>> EditPost(PostDTO post)
+	{
+		if (post.Title is null)
+			return Either.Instanciate<ErrorCall, SuccessCall>(new ErrorCall { Message = "Post not edited", Details = new Exception("Invalid title") });
+
+		if (post.Content is null)
+			return Either.Instanciate<ErrorCall, SuccessCall>(new ErrorCall { Message = "Post not edited", Details = new Exception("Invalid content") });
+
+		var resultPost = await _postsRepository.SearchPost(post.Id);
+
+		if (resultPost is null)
+			return Either.Instanciate<ErrorCall, SuccessCall>(new ErrorCall { Message = "Post not edited", Details = new Exception("Post not found") });
+
+		resultPost.Title = post.Title;
+		resultPost.Content = post.Content;
+
+		var editedPost = await _postsRepository.EditPost(resultPost);
+
+		return Either.Instanciate<ErrorCall, SuccessCall>(new SuccessCall { Message = "Post edited", Details = editedPost });
+	}
+
+	public async Task<Either<ErrorCall, SuccessCall>> DeletePost(int id)
+	{
+		var resultPost = await _postsRepository.SearchPost(id);
+
+		if (resultPost is null)
+			return Either.Instanciate<ErrorCall, SuccessCall>(new ErrorCall { Message = "Post not deleted", Details = new Exception("Post not found") });
+
+		await _postsRepository.RemovePost(resultPost);
+
+		return Either.Instanciate<ErrorCall, SuccessCall>(new SuccessCall { Message = "Post deleted", Details = id });
+	}
 }
