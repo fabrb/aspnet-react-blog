@@ -3,35 +3,29 @@ using Microsoft.AspNetCore.Authorization;
 using fabarblog.DTO;
 using fabarblog.Models;
 using fabarblog.Services;
-using System.Text;
-using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 
 namespace fabarblog.Controller;
 
 [ApiController]
 [Route("api/user")]
-public class UserController(UserService usersService, IConfiguration configuration) : ControllerBase
+public class UserController(ListUsers listUsersService, CreateUser createUserService, EditUser editUserService, DeleteUser deleteUserService) : ControllerBase
 {
-	private readonly UserService _usersService = usersService;
-	private readonly IConfiguration _configuration = configuration;
+	private readonly ListUsers _listUsersService = listUsersService;
+	private readonly CreateUser _createUserService = createUserService;
+	private readonly EditUser _editUserService = editUserService;
+	private readonly DeleteUser _deleteUserService = deleteUserService;
 
-	[Authorize(Roles = "admin")]
+	[Authorize]
 	[HttpGet]
 	public async Task<ActionResult<IEnumerable<User>>> ListAll()
 	{
-		var users = await _usersService.GetAllUsers();
-		return Ok(users);
-	}
+		var isAdmin = User.Claims.Any(c => c.Type == ClaimTypes.Role && c.Value.Equals("ADMIN", StringComparison.CurrentCultureIgnoreCase));
 
-	[Authorize]
-	[HttpPost]
-	public async Task<ActionResult<Guid>> Create([FromBody] UserDTO user, [FromHeader] string? autenthication)
-	{
-		if (user == null)
-			return BadRequest("Invalid user data");
+		if (!isAdmin)
+			return Unauthorized();
 
-		var result = await _usersService.CreateNewUser(user);
+		var result = await _listUsersService.Execute();
 
 		if (result.IsLeft())
 			return BadRequest(result);
@@ -40,34 +34,57 @@ public class UserController(UserService usersService, IConfiguration configurati
 	}
 
 	[AllowAnonymous]
-	[HttpPost("login")]
-	public async Task<ActionResult<Guid>> Authenticate([FromBody] UserDTO user, [FromHeader] string? autenthication)
+	[HttpPost]
+	public async Task<ActionResult<Guid>> Create([FromBody] UserRequest user)
 	{
-		var tokenHandler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
-		var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
-		var tokenDescriptor = new SecurityTokenDescriptor
-		{
-			Subject = new ClaimsIdentity(
-			[
-				new(ClaimTypes.NameIdentifier, user.Email),
-				new(ClaimTypes.Name, user.Username),
-				new(ClaimTypes.Role, "admin")
-			]),
+		if (user == null)
+			return BadRequest("Invalid user data");
 
-			Expires = DateTime.UtcNow.AddHours(1),
-			SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-		};
+		var isAdmin = User.Claims.Any(c => c.Type == ClaimTypes.Role && c.Value.Equals("ADMIN", StringComparison.CurrentCultureIgnoreCase));
 
-		var token = tokenHandler.CreateToken(tokenDescriptor);
-		var tokenString = tokenHandler.WriteToken(token);
+		if (!isAdmin)
+			user.Role = "basic";
 
-		return Ok(new { Token = tokenString });
+		var result = await _createUserService.Execute(user);
+
+		if (result.IsLeft())
+			return BadRequest(result);
+
+		return Ok(result);
 	}
 
+	[HttpPut("{id}")]
 	[Authorize]
-	[HttpPut("logout")]
-	public async Task<ActionResult<Guid>> Unauthenticate([FromHeader] string? autenthication)
+	public async Task<ActionResult<Guid>> Edit([FromBody] UserRequest user, int id)
 	{
-		return Ok();
+		user.Id = id;
+		var isAdmin = User.Claims.Any(c => c.Type == ClaimTypes.Role && c.Value.Equals("ADMIN", StringComparison.CurrentCultureIgnoreCase));
+
+		if (!isAdmin)
+			return Unauthorized();
+
+		var result = await _editUserService.Execute(user);
+
+		if (result.IsLeft())
+			return BadRequest(result);
+
+		return Ok(result);
+	}
+
+	[HttpDelete("{id}")]
+	[Authorize]
+	public async Task<ActionResult<Guid>> Delete(int id)
+	{
+		var isAdmin = User.Claims.Any(c => c.Type == ClaimTypes.Role && c.Value.Equals("ADMIN", StringComparison.CurrentCultureIgnoreCase));
+
+		if (!isAdmin)
+			return Unauthorized();
+
+		var result = await _deleteUserService.Execute(id);
+
+		if (result.IsLeft())
+			return BadRequest(result);
+
+		return Ok(result);
 	}
 }

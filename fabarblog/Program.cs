@@ -30,8 +30,8 @@ builder.Services.AddAuthentication(options =>
 		options.SaveToken = true;
 		options.TokenValidationParameters = new TokenValidationParameters
 		{
-			// ValidateIssuer = true,
-			// ValidateAudience = true,
+			ValidateIssuer = true,
+			ValidateAudience = true,
 			ValidateLifetime = true,
 			ValidateIssuerSigningKey = true,
 			ValidIssuer = jwtSettings["Issuer"],
@@ -50,11 +50,22 @@ builder.Services.AddAuthorizationBuilder()
 builder.Services.AddScoped<PostRepository>();
 builder.Services.AddScoped<UserRepository>();
 
-builder.Services.AddScoped<PostService>();
-builder.Services.AddScoped<UserService>();
+// Post Services
+builder.Services.AddScoped<CreatePost>();
+builder.Services.AddScoped<EditPost>();
+builder.Services.AddScoped<DeletePost>();
+builder.Services.AddScoped<ListPosts>();
 
-builder.Logging.AddConsole();
+// User Services
+builder.Services.AddScoped<CreateUser>();
+builder.Services.AddScoped<EditUser>();
+builder.Services.AddScoped<DeleteUser>();
+builder.Services.AddScoped<ListUsers>();
 
+// Authentication Services
+builder.Services.AddScoped<AuthenticateUser>();
+builder.Services.AddScoped<VerifyAuthentication>();
+builder.Services.AddScoped<GenerateAuthenticationToken>();
 
 var app = builder.Build();
 
