@@ -22,6 +22,18 @@ public class UserRepository
 			.ToListAsync();
 	}
 
+	public async Task<User?> SearchUser(int id)
+	{
+		return await _context.Users
+			.FirstOrDefaultAsync(user => user.Id == id);
+	}
+
+	public async Task<User?> SearchUserByEmail(string email)
+	{
+		return await _context.Users
+			.FirstOrDefaultAsync(user => user.Email == email);
+	}
+
 	public async Task<bool> IncludeNewUser(User user)
 	{
 		try
@@ -33,6 +45,36 @@ public class UserRepository
 		catch (Exception ex)
 		{
 			Console.WriteLine("IncludeNewUser ERROR");
+			Console.WriteLine(ex);
+		}
+
+		return true;
+	}
+
+	public async Task<bool> EditUser(User user)
+	{
+		try
+		{
+			var x = _context.Users.Entry(user).State = EntityState.Modified;
+			await _context.SaveChangesAsync();
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex);
+		}
+
+		return true;
+	}
+
+	public async Task<bool> Removeuser(User user)
+	{
+		try
+		{
+			var x = _context.Users.Remove(user);
+			await _context.SaveChangesAsync();
+		}
+		catch (Exception ex)
+		{
 			Console.WriteLine(ex);
 		}
 
