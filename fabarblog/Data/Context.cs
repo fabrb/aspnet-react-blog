@@ -12,7 +12,7 @@ public class Context : DbContext
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
-		modelBuilder.Entity<Post>().Property(p => p.Id).ValueGeneratedOnAdd();
-		modelBuilder.Entity<User>().Property(p => p.Id).ValueGeneratedOnAdd();
+		// modelBuilder.Entity<Post>().Property(p => p.Id).ValueGeneratedOnAdd();
+		// modelBuilder.Entity<User>().Property(p => p.Id).ValueGeneratedOnAdd();
 	}
 }
