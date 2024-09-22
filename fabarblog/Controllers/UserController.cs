@@ -58,12 +58,15 @@ public class UserController(ListUsers listUsersService, CreateUser createUserSer
 	public async Task<ActionResult<Guid>> Edit([FromBody] UserRequest user, int id)
 	{
 		user.Id = id;
-		var isAdmin = User.Claims.Any(c => c.Type == ClaimTypes.Role && c.Value.Equals("ADMIN", StringComparison.CurrentCultureIgnoreCase));
 
-		if (!isAdmin)
+		var isAdmin = User.Claims.Any(c => c.Type == ClaimTypes.Role && c.Value.Equals("ADMIN", StringComparison.CurrentCultureIgnoreCase));
+		var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+		if (userIdClaim == null)
 			return Unauthorized();
 
-		var result = await _editUserService.Execute(user);
+		var userId = int.Parse(userIdClaim.Value);
+
+		var result = await _editUserService.Execute(user, userId, isAdmin);
 
 		if (result.IsLeft())
 			return BadRequest(result);
@@ -76,11 +79,13 @@ public class UserController(ListUsers listUsersService, CreateUser createUserSer
 	public async Task<ActionResult<Guid>> Delete(int id)
 	{
 		var isAdmin = User.Claims.Any(c => c.Type == ClaimTypes.Role && c.Value.Equals("ADMIN", StringComparison.CurrentCultureIgnoreCase));
-
-		if (!isAdmin)
+		var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+		if (userIdClaim == null)
 			return Unauthorized();
 
-		var result = await _deleteUserService.Execute(id);
+		var userId = int.Parse(userIdClaim.Value);
+
+		var result = await _deleteUserService.Execute(id, userId, isAdmin);
 
 		if (result.IsLeft())
 			return BadRequest(result);

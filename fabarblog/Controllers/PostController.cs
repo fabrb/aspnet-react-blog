@@ -3,6 +3,7 @@ using fabarblog.DTO;
 using fabarblog.Models;
 using fabarblog.Services;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace fabarblog.Controller;
 
@@ -29,9 +30,14 @@ public class PostController(ListPosts listPostsService, CreatePost createPostSer
 
 	[HttpPost]
 	[Authorize]
-	public async Task<ActionResult<Guid>> Create([FromBody] PostRequest post, [FromHeader] string autenthication)
+	public async Task<ActionResult<Guid>> Create([FromBody] PostRequest post)
 	{
-		var result = await _createPostService.Execute(post);
+		var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+		if (userIdClaim == null)
+			return Unauthorized();
+
+		var userId = int.Parse(userIdClaim.Value);
+		var result = await _createPostService.Execute(post, userId);
 
 		if (result.IsLeft())
 			return BadRequest(result);
@@ -41,17 +47,18 @@ public class PostController(ListPosts listPostsService, CreatePost createPostSer
 
 	[HttpPut("{id}")]
 	[Authorize]
-	public async Task<ActionResult<Guid>> Edit([FromBody] PostRequest post, int id, [FromHeader] string autenthication)
+	public async Task<ActionResult<Guid>> Edit([FromBody] PostRequest post, int id)
 	{
-		Console.WriteLine("id");
-		Console.WriteLine(id);
-
-		Console.WriteLine("post");
-		Console.WriteLine(post);
-
 		post.Id = id;
 
-		var result = await _editPostService.Execute(post);
+		var isAdmin = User.Claims.Any(c => c.Type == ClaimTypes.Role && c.Value.Equals("ADMIN", StringComparison.CurrentCultureIgnoreCase));
+		var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+		if (userIdClaim == null)
+			return Unauthorized();
+
+		var userId = int.Parse(userIdClaim.Value);
+
+		var result = await _editPostService.Execute(post, userId, isAdmin);
 
 		if (result.IsLeft())
 			return BadRequest(result);
@@ -61,9 +68,16 @@ public class PostController(ListPosts listPostsService, CreatePost createPostSer
 
 	[HttpDelete("{id}")]
 	[Authorize]
-	public async Task<ActionResult<Guid>> Delete(int id, [FromHeader] string autenthication)
+	public async Task<ActionResult<Guid>> Delete(int id)
 	{
-		var result = await _deletePostService.Execute(id);
+		var isAdmin = User.Claims.Any(c => c.Type == ClaimTypes.Role && c.Value.Equals("ADMIN", StringComparison.CurrentCultureIgnoreCase));
+		var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+		if (userIdClaim == null)
+			return Unauthorized();
+
+		var userId = int.Parse(userIdClaim.Value);
+
+		var result = await _deletePostService.Execute(id, userId, isAdmin);
 
 		if (result.IsLeft())
 			return BadRequest(result);
