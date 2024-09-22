@@ -22,7 +22,8 @@ public class ListUsers(UserRepository usersRepository)
 			{
 				Id = user.Id,
 				Email = user.Email,
-				Username = user.Username
+				Username = user.Username,
+				Role = user.Role.ToString()
 			});
 		}
 

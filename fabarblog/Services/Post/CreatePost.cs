@@ -8,7 +8,7 @@ public class CreatePost(PostRepository postsRepository)
 {
 	private readonly PostRepository _postsRepository = postsRepository;
 
-	public async Task<Either<ErrorCall, SuccessCall>> Execute(PostRequest post)
+	public async Task<Either<ErrorCall, SuccessCall>> Execute(PostRequest post, int userId)
 	{
 		if (post.Title is null)
 			return Either.Instanciate<ErrorCall, SuccessCall>(new ErrorCall { Message = "Post not created", Details = new Exception("Invalid title") });
@@ -21,19 +21,20 @@ public class CreatePost(PostRepository postsRepository)
 			Title = post.Title,
 			Content = post.Content,
 			CreatedAt = DateTime.UtcNow,
-			UserId = 2
+			UserId = userId
 		};
 
-		await _postsRepository.IncludeNewPost(newPost);
+		var addedPost = await _postsRepository.IncludeNewPost(newPost);
+		var addedPostWithRefs = await _postsRepository.SearchPost(addedPost.Id);
 
 		PostResponse response = new()
 		{
-			Id = newPost.Id,
-			Title = newPost.Title,
-			Content = newPost.Content,
+			Id = addedPostWithRefs.Id,
+			Title = addedPostWithRefs.Title,
+			Content = addedPostWithRefs.Content,
 
-			Author = newPost.User.Username,
-			CreationDate = newPost.CreatedAt
+			Author = addedPostWithRefs.User.Username,
+			CreationDate = addedPostWithRefs.CreatedAt
 		};
 
 		return Either.Instanciate<ErrorCall, SuccessCall>(new SuccessCall { Message = "Post created", Details = response });

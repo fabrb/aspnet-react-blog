@@ -18,8 +18,9 @@ public class GenerateAuthenticationToken(IConfiguration configuration)
 		{
 			Subject = new ClaimsIdentity(
 			[
-				new Claim(ClaimTypes.NameIdentifier, user.Email),
-				new Claim(ClaimTypes.Name, user.Email),
+				new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+				new Claim(ClaimTypes.Name, user.Username),
+				new Claim(ClaimTypes.Email, user.Email),
 				new Claim(ClaimTypes.Role, user.Role.ToString())
 			]),
 			Expires = DateTime.UtcNow.AddHours(1),

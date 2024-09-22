@@ -10,7 +10,7 @@ public class EditUser(UserRepository usersRepository)
 	private readonly UserRepository _usersRepository = usersRepository;
 	private readonly PasswordHasher<User> _passwordHasher = new();
 
-	public async Task<Either<ErrorCall, SuccessCall>> Execute(UserRequest user)
+	public async Task<Either<ErrorCall, SuccessCall>> Execute(UserRequest user, int userId, bool isAdmin)
 	{
 		if (user.Email is null)
 			return Either.Instanciate<ErrorCall, SuccessCall>(new ErrorCall { Message = "User not edited", Details = new Exception("Invalid e-mail") });
@@ -20,6 +20,9 @@ public class EditUser(UserRepository usersRepository)
 
 		if (user.Password is null)
 			return Either.Instanciate<ErrorCall, SuccessCall>(new ErrorCall { Message = "User not edited", Details = new Exception("Invalid password") });
+
+		if (user.Id != userId && !isAdmin)
+			return Either.Instanciate<ErrorCall, SuccessCall>(new ErrorCall { Message = "User not edited", Details = new Exception("Not authorized") });
 
 		var resultUser = await _usersRepository.SearchUser(user.Id);
 
