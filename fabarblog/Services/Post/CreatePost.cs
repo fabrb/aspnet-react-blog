@@ -33,7 +33,11 @@ public class CreatePost(PostRepository postsRepository)
 			Title = addedPostWithRefs.Title,
 			Content = addedPostWithRefs.Content,
 
-			Author = addedPostWithRefs.User.Username,
+			Author = new()
+			{
+				Id = addedPostWithRefs.User.Id,
+				Name = addedPostWithRefs.User.Username
+			},
 			CreationDate = addedPostWithRefs.CreatedAt
 		};
 

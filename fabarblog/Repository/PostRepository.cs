@@ -19,6 +19,7 @@ public class PostRepository
 	{
 		return await _context.Posts
 			.Include(u => u.User)
+			.OrderByDescending(p => p.Id)
 			.ToListAsync();
 	}
 

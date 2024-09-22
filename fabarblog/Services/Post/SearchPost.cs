@@ -19,7 +19,11 @@ public class SearchPost(PostRepository postsRepository)
 			Id = resultPosts.Id,
 			Title = resultPosts.Title,
 			Content = resultPosts.Content,
-			Author = resultPosts.User.Username,
+			Author = new()
+			{
+				Id = resultPosts.User.Id,
+				Name = resultPosts.User.Username
+			},
 			CreationDate = resultPosts.CreatedAt
 		};
 

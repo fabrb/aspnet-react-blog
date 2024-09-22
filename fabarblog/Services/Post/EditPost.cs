@@ -34,7 +34,11 @@ public class EditPost(PostRepository postsRepository)
 			Title = resultPost.Title,
 			Content = resultPost.Content,
 
-			Author = resultPost.User.Username,
+			Author = new()
+			{
+				Id = resultPost.User.Id,
+				Name = resultPost.User.Username
+			},
 			CreationDate = resultPost.CreatedAt
 		};
 

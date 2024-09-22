@@ -23,7 +23,11 @@ public class ListPosts(PostRepository postsRepository)
 				Id = post.Id,
 				Title = post.Title,
 				Content = post.Content,
-				Author = post.User.Username,
+				Author = new()
+				{
+					Id = post.User.Id,
+					Name = post.User.Username
+				},
 				CreationDate = post.CreatedAt
 			});
 		}
