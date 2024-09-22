@@ -1,11 +1,11 @@
 import Home from "./home/Home"
 
-
 import PostWrite from "./post/write/PostWrite"
-import PostCreate from "./post/create/PostCreate"
-import UpdatePost from "./post/update/PostUpdate"
-
+import PostView from "./post/view/PostView"
 
 import UserProfile from "./user/profile/UserProfile"
+import UserList from "./user/list/UserList"
 
-export { Home, PostWrite, PostCreate, UpdatePost, UserProfile }
+import UserAuthenticate from "./authentication/authenticate/UserAuthenticate"
+
+export { Home, PostWrite, PostView, UserProfile, UserAuthenticate, UserList }

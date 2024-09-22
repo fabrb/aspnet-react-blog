@@ -18,7 +18,7 @@ const Home: React.FC = () => {
 
 	function ErrorBlock({ errorMessage }: ErrorBlockProps) {
 		return <div className='w-75'>
-			<div className='d-flex justify-content-center mt-3'>
+			<div className='d-flex align-items-center mt-3 flex-column'>
 				<h3>We were unable to load the posts.</h3>
 				<p className='danger'>{errorMessage}</p>
 
@@ -26,7 +26,6 @@ const Home: React.FC = () => {
 			</div>
 		</div>
 	}
-
 
 	if (loading) return <LoadingBlock />;
 	if (error) return <ErrorBlock errorMessage={error} />;
@@ -42,11 +41,11 @@ const Home: React.FC = () => {
 			<div id='posts-list' className='mx-5'>
 				{posts.map((post: Post) => (
 					<div key={post.id} className='mb-5'>
-						<h3 id='post-title'><Link to={`/write/${post.id}`}>{post.title}</Link></h3>
+						<h3 id='post-title'><Link to={`/post/${post.id}`}>{post.title}</Link></h3>
 						<div className='d-flex justify-content-between'>
 							<div className='d-flex'>
 								<i className="fas fa-user"></i>
-								<h6 id='post-author' className='ms-2'>{post.author}</h6>
+								<h6 id='post-author' className='ms-2'>{post.author.name}</h6>
 							</div>
 
 							<div className='d-flex'>

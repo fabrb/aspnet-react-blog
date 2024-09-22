@@ -1,27 +1,31 @@
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useState } from 'react';
+import { loginUser } from '../../services/userService';
 
 const useAuthenticateUser = () => {
-	const [posts, setPosts] = useState([]);
-	const [loading, setLoading] = useState(true);
+	const [auth, setAuth] = useState<string | null>(null);
+	const [loading, setLoading] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
 
-	useEffect(() => {
-		const fetchPosts = async () => {
-			try {
-				const response = await axios.get(`${process.env.REACT_APP_API_URL}/posts`);
-				setPosts(response.data);
-			} catch (err) {
-				setError('Failed to fetch posts');
-			} finally {
-				setLoading(false);
+	const authenticateUser = async (email: string, password: string) => {
+		setLoading(true);
+		setError(null);
+		try {
+			const response = await loginUser(email, password);
+
+			if (response.value.message === "User not authenticated") {
+				setError(`Failed to authenticate user: ${response.value.details.message}`);
+				return
 			}
-		};
 
-		fetchPosts();
-	}, []);
+			setAuth(response.value.details.token);
+		} catch (err: any) {
+			setError(`Failed to authenticate user: ${err.message}`);
+		} finally {
+			setLoading(false);
+		}
+	};
 
-	return { posts, loading, error };
+	return { auth, loading, error, authenticateUser };
 };
 
 export default useAuthenticateUser;
