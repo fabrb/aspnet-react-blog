@@ -9,9 +9,10 @@ namespace fabarblog.Controller;
 
 [ApiController]
 [Route("api/post")]
-public class PostController(ListPosts listPostsService, CreatePost createPostService, EditPost editPostService, DeletePost deletePostService) : ControllerBase
+public class PostController(ListPosts listPostsService, SearchPost searchPostService, CreatePost createPostService, EditPost editPostService, DeletePost deletePostService) : ControllerBase
 {
 	private readonly ListPosts _listPostsService = listPostsService;
+	private readonly SearchPost _searchPostService = searchPostService;
 	private readonly CreatePost _createPostService = createPostService;
 	private readonly EditPost _editPostService = editPostService;
 	private readonly DeletePost _deletePostService = deletePostService;
@@ -21,6 +22,18 @@ public class PostController(ListPosts listPostsService, CreatePost createPostSer
 	public async Task<ActionResult<IEnumerable<Post>>> ListAll()
 	{
 		var result = await _listPostsService.Execute();
+
+		if (result.IsLeft())
+			return BadRequest(result);
+
+		return Ok(result);
+	}
+
+	[HttpGet("{id}")]
+	[AllowAnonymous]
+	public async Task<ActionResult<Post>> Search(int id)
+	{
+		var result = await _searchPostService.Execute(id);
 
 		if (result.IsLeft())
 			return BadRequest(result);

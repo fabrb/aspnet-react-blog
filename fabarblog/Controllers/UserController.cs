@@ -9,9 +9,10 @@ namespace fabarblog.Controller;
 
 [ApiController]
 [Route("api/user")]
-public class UserController(ListUsers listUsersService, CreateUser createUserService, EditUser editUserService, DeleteUser deleteUserService) : ControllerBase
+public class UserController(ListUsers listUsersService, SearchUser searchUserService, CreateUser createUserService, EditUser editUserService, DeleteUser deleteUserService) : ControllerBase
 {
 	private readonly ListUsers _listUsersService = listUsersService;
+	private readonly SearchUser _searchUserService = searchUserService;
 	private readonly CreateUser _createUserService = createUserService;
 	private readonly EditUser _editUserService = editUserService;
 	private readonly DeleteUser _deleteUserService = deleteUserService;
@@ -26,6 +27,23 @@ public class UserController(ListUsers listUsersService, CreateUser createUserSer
 			return Unauthorized();
 
 		var result = await _listUsersService.Execute();
+
+		if (result.IsLeft())
+			return BadRequest(result);
+
+		return Ok(result);
+	}
+
+	[Authorize]
+	[HttpGet("{id}")]
+	public async Task<ActionResult<IEnumerable<User>>> Search(int id)
+	{
+		var isAdmin = User.Claims.Any(c => c.Type == ClaimTypes.Role && c.Value.Equals("ADMIN", StringComparison.CurrentCultureIgnoreCase));
+
+		if (!isAdmin)
+			return Unauthorized();
+
+		var result = await _searchUserService.Execute(id);
 
 		if (result.IsLeft())
 			return BadRequest(result);

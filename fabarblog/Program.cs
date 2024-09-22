@@ -12,6 +12,15 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(options =>
+{
+	options.AddPolicy("AllowAllOrigins",
+			builder => builder
+					.AllowAnyOrigin()
+					.AllowAnyMethod()
+					.AllowAnyHeader());
+});
+
 builder.Services.AddDbContext<Context>(options =>
 		options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection")));
 
@@ -55,12 +64,14 @@ builder.Services.AddScoped<CreatePost>();
 builder.Services.AddScoped<EditPost>();
 builder.Services.AddScoped<DeletePost>();
 builder.Services.AddScoped<ListPosts>();
+builder.Services.AddScoped<SearchPost>();
 
 // User Services
 builder.Services.AddScoped<CreateUser>();
 builder.Services.AddScoped<EditUser>();
 builder.Services.AddScoped<DeleteUser>();
 builder.Services.AddScoped<ListUsers>();
+builder.Services.AddScoped<SearchUser>();
 
 // Authentication Services
 builder.Services.AddScoped<AuthenticateUser>();
@@ -76,6 +87,7 @@ if (app.Environment.IsDevelopment())
 	app.UseSwaggerUI();
 }
 
+app.UseCors("AllowAllOrigins");
 app.UseRouting();
 
 app.UseAuthentication();

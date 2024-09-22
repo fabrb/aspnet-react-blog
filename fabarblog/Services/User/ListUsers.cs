@@ -23,7 +23,8 @@ public class ListUsers(UserRepository usersRepository)
 				Id = user.Id,
 				Email = user.Email,
 				Username = user.Username,
-				Role = user.Role.ToString()
+				Role = user.Role.ToString(),
+				CreationDate = user.CreatedAt
 			});
 		}
 
