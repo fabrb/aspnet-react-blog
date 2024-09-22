@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace fabarblog.Models;
 public class Post
@@ -9,8 +10,8 @@ public class Post
 
 	public int UserId { get; set; }
 
-	[JsonIgnore] //Depois trocar por uma outra estrutura, DTO
 	public User User { get; set; }
 
 	public DateTime CreatedAt { get; set; }
+
 }
