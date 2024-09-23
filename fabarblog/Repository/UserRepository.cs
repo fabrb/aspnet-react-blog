@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 using fabarblog.Models;
@@ -34,6 +32,12 @@ public class UserRepository
 			.FirstOrDefaultAsync(user => user.Email == email);
 	}
 
+	public async Task<bool> SearchIfAdminExist()
+	{
+		return await _context.Users.AnyAsync(user => user.Role == RoleLevel.ADMIN);
+	}
+
+
 	public async Task<bool> IncludeNewUser(User user)
 	{
 		try
@@ -44,7 +48,6 @@ public class UserRepository
 		}
 		catch (Exception ex)
 		{
-			Console.WriteLine("IncludeNewUser ERROR");
 			Console.WriteLine(ex);
 		}
 

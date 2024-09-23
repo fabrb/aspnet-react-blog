@@ -24,6 +24,10 @@ public class CreateUser(UserRepository usersRepository)
 		if (user.Role is null || !Enum.TryParse(user.Role.ToUpper(), out RoleLevel role))
 			role = RoleLevel.BASIC;
 
+		bool adminExists = await _usersRepository.SearchIfAdminExist();
+		if (!adminExists)
+			role = RoleLevel.ADMIN;
+
 		User newUser = new()
 		{
 			Username = user.Username,
@@ -40,7 +44,8 @@ public class CreateUser(UserRepository usersRepository)
 			Username = user.Username,
 			Email = user.Email,
 			Id = user.Id,
-			CreationDate = newUser.CreatedAt
+			CreationDate = newUser.CreatedAt,
+			Role = newUser.Role.ToString()
 		};
 
 		return Either.Instanciate<ErrorCall, SuccessCall>(new SuccessCall { Message = "User created", Details = responseUser });
