@@ -1,0 +1,72 @@
+curl --request POST \
+  --url http://localhost:5000/api/auth \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"email": "admin@mail.com",
+	"password": "123123"
+}'
+
+curl --request POST \
+  --url http://localhost:5000/api/user \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"email": "user@mail.com",
+	"username": "user",
+	"password": "123123",
+	"role": "admin"
+}'
+
+curl --request PUT \
+  --url http://localhost:5000/api/user/10 \
+  --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI1IiwidW5pcXVlX25hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJyb2xlIjoiQURNSU4iLCJuYmYiOjE3MjcwNDgxNDYsImV4cCI6MTcyNzA1MTc0NiwiaWF0IjoxNzI3MDQ4MTQ2LCJpc3MiOiJmYWJhcmJsb2ciLCJhdWQiOiJmYWJhcmJsb2cudXNlcnMifQ.edVqtlNElvqvIosaZVLBP1GMqTcku-KD8tBS_wOlw_I' \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"email": "user5@mail.com",
+	"username": "user5",
+	"password": "123",
+	"role": "admin"
+}'
+
+curl --request DELETE \
+  --url http://localhost:5000/api/user/100 \
+  --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI1IiwidW5pcXVlX25hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJyb2xlIjoiQURNSU4iLCJuYmYiOjE3MjcwNDgxNDYsImV4cCI6MTcyNzA1MTc0NiwiaWF0IjoxNzI3MDQ4MTQ2LCJpc3MiOiJmYWJhcmJsb2ciLCJhdWQiOiJmYWJhcmJsb2cudXNlcnMifQ.edVqtlNElvqvIosaZVLBP1GMqTcku-KD8tBS_wOlw_I'
+
+curl --request GET \
+  --url http://localhost:5000/api/user \
+  --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI1IiwidW5pcXVlX25hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJyb2xlIjoiQURNSU4iLCJuYmYiOjE3MjcwNDgxNDYsImV4cCI6MTcyNzA1MTc0NiwiaWF0IjoxNzI3MDQ4MTQ2LCJpc3MiOiJmYWJhcmJsb2ciLCJhdWQiOiJmYWJhcmJsb2cudXNlcnMifQ.edVqtlNElvqvIosaZVLBP1GMqTcku-KD8tBS_wOlw_I'
+
+curl --request GET \
+  --url http://localhost:5000/api/user/7 \
+  --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI1IiwidW5pcXVlX25hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJyb2xlIjoiQURNSU4iLCJuYmYiOjE3MjcwNDgxNDYsImV4cCI6MTcyNzA1MTc0NiwiaWF0IjoxNzI3MDQ4MTQ2LCJpc3MiOiJmYWJhcmJsb2ciLCJhdWQiOiJmYWJhcmJsb2cudXNlcnMifQ.edVqtlNElvqvIosaZVLBP1GMqTcku-KD8tBS_wOlw_I'
+
+curl --request POST \
+  --url http://localhost:5000/api/post \
+  --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI1IiwidW5pcXVlX25hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJyb2xlIjoiQURNSU4iLCJuYmYiOjE3MjcwNDgxNDYsImV4cCI6MTcyNzA1MTc0NiwiaWF0IjoxNzI3MDQ4MTQ2LCJpc3MiOiJmYWJhcmJsb2ciLCJhdWQiOiJmYWJhcmJsb2cudXNlcnMifQ.edVqtlNElvqvIosaZVLBP1GMqTcku-KD8tBS_wOlw_I' \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"title": "Nova postagem",
+	"content": "Puppies are soft, cute, funny, and make a big mess. Every month or two our family fosters 6-12 week old puppies for a puppy rescue nonprofit organization. We all enjoy cuddling their furry bodies after a clean bath. Fresh puppy smell is great. The puppies play with each other and our adult dog. They look so funny when they lay on top of each other and sleep. While puppies can be great fun, they also can make big messes. 4-6 puppies can make a lot of puppy pee and poop. It'\''s a challenge to keep the puppies and the puppy pen clean."
+}'
+
+curl --request PUT \
+  --url http://localhost:5000/api/post/1 \
+  --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI1IiwidW5pcXVlX25hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJyb2xlIjoiQURNSU4iLCJuYmYiOjE3MjcwNDgxNDYsImV4cCI6MTcyNzA1MTc0NiwiaWF0IjoxNzI3MDQ4MTQ2LCJpc3MiOiJmYWJhcmJsb2ciLCJhdWQiOiJmYWJhcmJsb2cudXNlcnMifQ.edVqtlNElvqvIosaZVLBP1GMqTcku-KD8tBS_wOlw_I' \
+  --header 'Content-Type: application/json' \
+  --header 'User-Agent: insomnia/10.0.0' \
+  --data '{
+	"title": "A",
+	"content": "AAAAAAAA"
+}'
+
+curl --request DELETE \
+  --url http://localhost:5000/api/post/11 \
+  --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI1IiwidW5pcXVlX25hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJyb2xlIjoiQURNSU4iLCJuYmYiOjE3MjcwNDgxNDYsImV4cCI6MTcyNzA1MTc0NiwiaWF0IjoxNzI3MDQ4MTQ2LCJpc3MiOiJmYWJhcmJsb2ciLCJhdWQiOiJmYWJhcmJsb2cudXNlcnMifQ.edVqtlNElvqvIosaZVLBP1GMqTcku-KD8tBS_wOlw_I' \
+  --header 'User-Agent: insomnia/10.0.0'
+
+curl --request GET \
+  --url http://localhost:5000/api/post \
+  --header 'User-Agent: insomnia/10.0.0'
+
+curl --request GET \
+  --url http://localhost:5000/api/post/7 \
+  --header 'User-Agent: insomnia/10.0.0'
