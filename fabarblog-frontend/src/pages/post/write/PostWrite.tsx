@@ -3,11 +3,15 @@ import './PostWrite.css';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSearchPost from '../../../hooks/post/useSearchPost';
 import { ErrorBlockProps } from '../../../types/ErrorBlockProps';
-import { createPost, updatePost } from '../../../services/postService';
+import useCreatePost from '../../../hooks/post/useCreatePost';
+import useEditPost from '../../../hooks/post/useEditPost';
 
 const PostWrite: React.FC = () => {
 	const { postId } = useParams<{ postId: string }>();
 	const { post, loading, error } = useSearchPost(postId!);
+
+	const { loading: loadingCreate, error: errorCreate, createNewPost } = useCreatePost();
+	const { loading: loadingEdit, error: errorEdit, editNewPost } = useEditPost();
 
 	const navigate = useNavigate();
 
@@ -66,10 +70,19 @@ const PostWrite: React.FC = () => {
 			return
 		}
 
-		if (postId)
-			await updatePost(postId, formData);
-		else
-			await createPost(formData);
+		if (postId) {
+			await editNewPost(postId, formData);
+			if (errorEdit)
+				return
+
+		}
+		else {
+			await createNewPost(formData);
+
+			if (errorCreate)
+				return
+
+		}
 
 		navigate(`/`);
 	}
@@ -108,10 +121,13 @@ const PostWrite: React.FC = () => {
 						<div className='d-flex justify-content-end'>
 							<button type="submit" className="d-flex btn btn-success btn-sm" disabled={loading}>
 								<i className="fas fa-pen"></i>
-								<small id='post-author' className='ms-2'>{loading ? 'Saving...' : 'Save'}</small>
+								<small id='post-author' className='ms-2'>{loadingCreate || loadingEdit ? 'Saving...' : 'Save'}</small>
 							</button>
 						</div>
 					</form>
+
+					{errorCreate && <div className="justify-content-center d-flex text-danger mt-3">{errorCreate}</div>}
+					{errorEdit && <div className="justify-content-center d-flex text-danger mt-3">{errorEdit}</div>}
 				</div>
 			</div>
 		</>

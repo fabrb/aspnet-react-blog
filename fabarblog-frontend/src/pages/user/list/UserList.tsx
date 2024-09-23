@@ -9,10 +9,14 @@ const UserList: React.FC = () => {
 	const { users, loading, error } = useListUsers();
 	const navigate = useNavigate();
 
-	const { loading: loadingDelete, error: errorDelete, removePost } = useDeleteUser();
+	const { error: errorDelete, removeUser } = useDeleteUser();
 
 	async function handleDelete(userId: string) {
-		await removePost(userId);
+		await removeUser(userId);
+
+		if (errorDelete)
+			return
+
 		navigate("/");
 	}
 
@@ -43,6 +47,8 @@ const UserList: React.FC = () => {
 
 	return (
 		<>
+			{errorDelete && <div className="justify-content-center d-flex text-danger mt-3">{errorDelete}</div>}
+
 			<table className="table">
 				<thead>
 					<tr>

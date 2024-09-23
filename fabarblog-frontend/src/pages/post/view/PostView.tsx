@@ -23,11 +23,11 @@ const PostView: React.FC = () => {
 
 	function ErrorBlock({ errorMessage }: ErrorBlockProps) {
 		return <div className='w-75'>
-			<div className='d-flex justify-content-center mt-3'>
+			<div className='d-flex align-items-center mt-3 flex-column'>
 				<h3>We were unable to load post.</h3>
 				<p className='danger'>{errorMessage}</p>
 
-				<h3>Please, refresh the page.</h3>
+				<h3>Please, refresh the page</h3>
 			</div>
 		</div>
 	}
