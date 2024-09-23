@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 
-import { Home, PostView, UserProfile, PostWrite, UserAuthenticate, UserList } from './pages/index';
+import { Home, PostView, PostWrite, UserAuthenticate, UserList, UserCreate } from './pages/index';
 import { Navigation } from './components/index'
 import ProtectedRoute from './components/route/ProtectedRoute';
 
@@ -21,13 +21,13 @@ const App: React.FC = () => {
 							<Route path="/write/:postId" element={<PostWrite />} />
 
 							<Route path="/auth" element={<UserAuthenticate />} />
+							<Route path="/signin" element={<UserCreate />} />
 
 							<Route path="/users" element={
 								<ProtectedRoute allowedRoles={['ADMIN']}>
 									<UserList />
 								</ProtectedRoute>
 							} />
-							<Route path="/user/:userId" element={<UserProfile />} />
 
 							<Route
 								path="*"

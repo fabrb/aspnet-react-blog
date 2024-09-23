@@ -18,8 +18,12 @@ const useAuthenticateUser = () => {
 			}
 
 			setAuth(response.value.details.token);
+			localStorage.setItem("auth.token", response.value.details.token)
+
+			return true
 		} catch (err: any) {
 			setError(`Failed to authenticate user: ${err.message}`);
+			return false
 		} finally {
 			setLoading(false);
 		}

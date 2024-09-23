@@ -1,23 +1,40 @@
 import { jwtDecode } from 'jwt-decode';
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Authentication: React.FC = () => {
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 	const [username, setUsername] = useState("");
 
-	useEffect(() => {
-		const authToken = localStorage.getItem("auth.token")
-		const authUser = localStorage.getItem("auth.username")
-		setUsername(authUser || "")
+	const navigate = useNavigate();
+
+	const checkAuthToken = () => {
+		const authToken = localStorage.getItem("auth.token");
 
 		if (authToken) {
-			setIsAuthenticated(true)
-
+			setIsAuthenticated(true);
 			const decodedToken: any = jwtDecode(authToken);
 			setUsername(decodedToken.unique_name);
+		} else {
+			setIsAuthenticated(false);
+			setUsername("");
 		}
+	};
+
+	useEffect(() => {
+		checkAuthToken();
+		window.addEventListener("storage", checkAuthToken);
+		return () => {
+			window.removeEventListener("storage", checkAuthToken);
+		};
 	}, []);
+
+	function signOut() {
+		localStorage.removeItem("auth.token")
+		checkAuthToken();
+		navigate("/");
+		navigate(0);
+	}
 
 	function UserBlock() {
 		if (isAuthenticated) {
@@ -28,8 +45,7 @@ const Authentication: React.FC = () => {
 					</button>
 					<div>
 						<div className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton" >
-							<a className="dropdown-item" href="#">Profile</a>
-							<a className="dropdown-item" href="#">Sign out</a>
+							<a className="dropdown-item" onClick={signOut}>Sign out</a>
 						</div>
 					</div>
 				</div>

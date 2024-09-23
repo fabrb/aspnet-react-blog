@@ -5,7 +5,7 @@ import useAuthenticateUser from '../../../hooks/authentication/useAuthenticateUs
 
 const UserAuthenticate: React.FC = () => {
 	const navigate = useNavigate();
-	const { auth, loading, error, authenticateUser } = useAuthenticateUser();
+	const { loading, error, authenticateUser } = useAuthenticateUser();
 
 	const [formData, setFormData] = useState({
 		email: '',
@@ -21,11 +21,15 @@ const UserAuthenticate: React.FC = () => {
 		e.preventDefault()
 
 		const { email, password } = formData;
-		await authenticateUser(email, password)
 
-		if (auth) {
-			localStorage.setItem("auth.token", auth);
-			navigate("/");
+		const success = await authenticateUser(email, password)
+
+		if (success) {
+			const token = localStorage.getItem("auth.token");
+			if (token) {
+				navigate("/");
+				navigate(0)
+			}
 		}
 	}
 
@@ -49,7 +53,7 @@ const UserAuthenticate: React.FC = () => {
 
 			<small className='d-flex justify-content-center mt-3'>Don't have an account?</small>
 			<small className='d-flex justify-content-center'>
-				<Link to="/">
+				<Link to="/signin">
 					Create here
 				</Link>
 			</small>
