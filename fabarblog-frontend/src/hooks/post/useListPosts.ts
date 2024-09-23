@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { Post } from '../../types/Post';
+import { getPosts } from '../../services/postService';
 
 const useListPosts = () => {
 	const [posts, setPosts] = useState<Post[]>([]);
@@ -10,10 +10,18 @@ const useListPosts = () => {
 	useEffect(() => {
 		const fetchPosts = async () => {
 			try {
-				const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/post`);
-				setPosts(response.data.value.details);
+				const response = await getPosts();
 
-			} catch (err) {
+				if (response.value.details.message === "No posts were created") {
+					setPosts([]);
+					setError('No posts were created');
+
+					return
+				}
+
+				setPosts(response.value.details);
+
+			} catch (err: any) {
 				setPosts([])
 				setError('Failed to fetch posts');
 			} finally {

@@ -5,7 +5,7 @@ const useDeleteUser = () => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const removePost = async (id: string) => {
+	const removeUser = async (id: string) => {
 		setLoading(true);
 		setError(null);
 		try {
@@ -22,7 +22,7 @@ const useDeleteUser = () => {
 		}
 	};
 
-	return { loading, error, removePost };
+	return { loading, error, removeUser };
 };
 
 export default useDeleteUser;

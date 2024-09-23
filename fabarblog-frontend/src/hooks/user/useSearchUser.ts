@@ -1,20 +1,28 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Post } from '../../types/Post';
+import { User } from '../../types/User';
+import { getUser } from '../../services/userService';
 
 const useSearchUser = (postId: string) => {
-	const [post, setPost] = useState<Post>();
+	const [user, setUser] = useState<User | null>();
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
 		const fetchUser = async () => {
 			try {
-				const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/user/${postId}`);
-				setPost(response.data.value.details);
+				const response = await getUser(postId)
+
+				if (response.value.details.message === "Not found") {
+					setUser(null);
+					setError('Not found');
+
+					return
+				}
+
+				setUser(response.value.details);
 
 			} catch (err) {
-				setPost(undefined)
+				setUser(undefined)
 				setError('Failed to fetch user');
 			} finally {
 				setLoading(false);
@@ -24,7 +32,7 @@ const useSearchUser = (postId: string) => {
 		fetchUser();
 	}, []);
 
-	return { post, loading, error };
+	return { post: user, loading, error };
 };
 
 export default useSearchUser;

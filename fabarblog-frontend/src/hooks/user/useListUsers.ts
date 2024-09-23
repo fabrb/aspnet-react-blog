@@ -11,6 +11,14 @@ const useListUsers = () => {
 		const fetchUsers = async () => {
 			try {
 				const response = await getUsers()
+
+				if (response.value.details.message === "No users were created") {
+					setUsers([]);
+					setError('No users were created');
+
+					return
+				}
+
 				setUsers(response.value.details);
 			} catch (err) {
 				setUsers([])
